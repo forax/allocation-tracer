@@ -36,11 +36,11 @@ final class AllocationMethodVisitor extends LocalVariablesSorter {
     super.visitTypeInsn(opcode, type);
     if (opcode == Opcodes.NEW) {
       mv.visitLdcInsn(type);
-      pushContext();
+      emitAllocationContext();
       mv.visitMethodInsn(Opcodes.INVOKESTATIC, PROBE_OWNER, "objectAllocation", PROBE_OBJECT_DESC, false);
     } else if (opcode == Opcodes.ANEWARRAY) {
       mv.visitInsn(Opcodes.DUP);
-      pushContext();
+      emitAllocationContext();
       mv.visitMethodInsn(Opcodes.INVOKESTATIC, PROBE_OWNER, "arrayAllocation", PROBE_ARRAY_DESC, false);
     }
   }
@@ -50,7 +50,7 @@ final class AllocationMethodVisitor extends LocalVariablesSorter {
     super.visitIntInsn(opcode, operand);
     if (opcode == Opcodes.NEWARRAY) {
       mv.visitInsn(Opcodes.DUP);
-      pushContext();
+      emitAllocationContext();
       mv.visitMethodInsn(Opcodes.INVOKESTATIC, PROBE_OWNER, "arrayAllocation", PROBE_ARRAY_DESC, false);
     }
   }
@@ -59,11 +59,11 @@ final class AllocationMethodVisitor extends LocalVariablesSorter {
   public void visitMultiANewArrayInsn(String descriptor, int numDimensions) {
     super.visitMultiANewArrayInsn(descriptor, numDimensions);
     mv.visitInsn(Opcodes.DUP);
-    pushContext();
+    emitAllocationContext();
     mv.visitMethodInsn(Opcodes.INVOKESTATIC, PROBE_OWNER, "arrayAllocation", PROBE_ARRAY_DESC, false);
   }
 
-  private void pushContext() {
+  private void emitAllocationContext() {
     mv.visitLdcInsn(ownerClassName);
     mv.visitLdcInsn(methodName);
     mv.visitLdcInsn(methodDescriptor);
