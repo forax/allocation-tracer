@@ -1,5 +1,6 @@
 package com.github.forax.allocagent.agent;
 
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
@@ -7,13 +8,14 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
 final class AllocationMethodVisitor extends LocalVariablesSorter {
   private static final String PROBE_OWNER = Probe.class.getName().replace('.', '/');
   private static final String PROBE_ARRAY_DESC =
-      "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V";
+      "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V";
   private static final String PROBE_OBJECT_DESC =
-      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V";
+      "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V";
 
   private final String ownerClassName;
   private final String methodName;
   private final String methodDescriptor;
+  private int lineNumber;
 
   AllocationMethodVisitor(int access, String descriptor, MethodVisitor mv,
                           String ownerClassName, String methodName, String methodDescriptor) {
@@ -21,6 +23,12 @@ final class AllocationMethodVisitor extends LocalVariablesSorter {
     this.ownerClassName = ownerClassName;
     this.methodName = methodName;
     this.methodDescriptor = methodDescriptor;
+  }
+
+  @Override
+  public void visitLineNumber(int lineNumber, Label start) {
+    this.lineNumber = lineNumber;
+    super.visitLineNumber(lineNumber, start);
   }
 
   @Override
@@ -59,5 +67,6 @@ final class AllocationMethodVisitor extends LocalVariablesSorter {
     mv.visitLdcInsn(ownerClassName);
     mv.visitLdcInsn(methodName);
     mv.visitLdcInsn(methodDescriptor);
+    mv.visitLdcInsn(lineNumber);
   }
 }

@@ -77,19 +77,20 @@ public final class Probe {
   }
 
   /**
-   * @param object           the allocated object
-   * @param className        class containing the allocation site (dot form)
-   * @param methodName       method containing the allocation site
+   * @param object           the allocated object.
+   * @param className        class containing the allocation site (dot form).
+   * @param methodName       method containing the allocation site.
    * @param methodDescriptor JVM descriptor of that method, e.g. "(I)Ljava/lang/String;"
+   * @param lineNumber       the line number of the allocation site.
    */
-  public static void arrayAllocation(Object object, String className, String methodName, String methodDescriptor) {
+  public static void arrayAllocation(Object object, String className, String methodName, String methodDescriptor, int lineNumber) {
     var writer = Constants.WRITER;
 
     synchronized (LOCK) {
       var counter = COUNTER++;
       var size = Constants.INSTRUMENTATION.getObjectSize(object);
-      var line = counter + ":" + Thread.currentThread().getName() + ":"
-          + className + ":" + methodName + methodDescriptor + ":" + size;
+      var line = counter + ":" /* + Thread.currentThread().getName() + ":" */
+          + className + ":" + methodName + methodDescriptor + ":" + lineNumber + ":" + size;
       try {
         writer.write(line);
         writer.newLine();
@@ -99,18 +100,19 @@ public final class Probe {
   }
 
   /**
-   * @param type             the allocated object type
-   * @param className        class containing the allocation site (dot form)
-   * @param methodName       method containing the allocation site
-   * @param methodDescriptor JVM descriptor of that method, e.g. "(I)Ljava/lang/String;"
+   * @param type             the allocated object type.
+   * @param className        class containing the allocation site (dot form).
+   * @param methodName       method containing the allocation site.
+   * @param methodDescriptor JVM descriptor of that method, e.g. "(I)Ljava/lang/String;".
+   * @param lineNumber       the line number of the allocation site
    */
-  public static void objectAllocation(String type, String className, String methodName, String methodDescriptor) {
+  public static void objectAllocation(String type, String className, String methodName, String methodDescriptor, int lineNumber) {
     var writer = Constants.WRITER;
 
     synchronized (LOCK) {
       var counter = COUNTER++;
-      var line = counter + ":" + Thread.currentThread().getName() + ":"
-          + className + ":" + methodName + methodDescriptor + ":" + type;
+      var line = counter + ":" /* + Thread.currentThread().getName() + ":"*/
+          + className + ":" + methodName + methodDescriptor + ":" + lineNumber + ":" + type;
       try {
         writer.write(line);
         writer.newLine();
