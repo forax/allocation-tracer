@@ -54,6 +54,9 @@ public final class Probe {
 
     static {
       var injection = INJECTION.get();
+      if (injection == null) {
+        throw new AssertionError("bad initialization sequence");
+      }
       WRITER = injection.writer;
       INSTRUMENTATION = injection.instrumentation;
     }
