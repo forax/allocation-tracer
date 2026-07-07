@@ -76,7 +76,6 @@ public final class Probe {
       return;
     }
     INJECTION.set(new Injection(writer, inst));
-    Runtime.getRuntime().addShutdownHook(new Thread(Probe::close));
   }
 
   /**
@@ -97,6 +96,7 @@ public final class Probe {
       try {
         writer.write(line);
         writer.newLine();
+        writer.flush();
       } catch (IOException e) {
         //System.err.println("[allocation-agent] io exception : " + e);
       }
@@ -120,20 +120,9 @@ public final class Probe {
       try {
         writer.write(line);
         writer.newLine();
-      } catch (IOException e) {
-        //System.err.println("[allocation-agent] io exception : " + e);
-      }
-    }
-  }
-
-  private static void close() {
-    var writer = Constants.WRITER;
-    if (writer != null) {
-      try {
         writer.flush();
-        writer.close();
       } catch (IOException e) {
-        //System.err.println("[allocation-agent] io exception : " + e);
+        System.err.println("[allocation-agent] io exception : " + e);
       }
     }
   }
