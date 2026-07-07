@@ -25,6 +25,6 @@ final class AllocationClassVisitor extends ClassVisitor {
     if (mv == null) {
       return null;
     }
-    return new AllocationMethodVisitor(access, descriptor, mv, ownerClassName, name, descriptor);
+    return new AllocationMethodVisitor(mv, ownerClassName, name, descriptor);
   }
 }

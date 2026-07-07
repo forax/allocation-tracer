@@ -12,7 +12,11 @@ import java.util.jar.Manifest;
 
 public final class Agent {
   private static final String PROBE_RESOURCE =
-      Probe.class.getName().replace('.', '/') + ".class";
+      Agent.class.getPackageName().replace('.', '/') + "/Probe.class";
+  private static final String PROBE_CONSTANTS_RESOURCE =
+      Agent.class.getPackageName().replace('.', '/') + "/Probe$Constants.class";
+  private static final String PROBE_INJECTION_RESOURCE =
+      Agent.class.getPackageName().replace('.', '/') + "/Probe$Injection.class";
 
   public static void premain(String agentArgs, Instrumentation inst) throws IOException {
     if (!inst.isRetransformClassesSupported()) {
@@ -42,14 +46,17 @@ public final class Agent {
     premain(agentArgs, inst);
   }
 
-  private static Path buildBootstrapJar() throws IOException {
-    byte[] probeBytes;
-    try (var in = Agent.class.getClassLoader().getResourceAsStream(PROBE_RESOURCE)) {
+  private static byte[] resourceToBytes(String resource) throws IOException {
+    try (var in = Agent.class.getClassLoader().getResourceAsStream(resource)) {
       if (in == null) {
-        throw new IllegalStateException("Cannot find " + PROBE_RESOURCE + " inside the agent jar");
+        throw new IllegalStateException("Cannot find " + resource + " inside the agent jar");
       }
-      probeBytes = in.readAllBytes();
+      return in.readAllBytes();
     }
+  }
+
+  private static Path buildBootstrapJar() throws IOException {
+
 
     var jarPath = Files.createTempFile("allocation-agent-probe", ".jar");
     jarPath.toFile().deleteOnExit();
@@ -59,7 +66,13 @@ public final class Agent {
 
     try (var output = new JarOutputStream(Files.newOutputStream(jarPath), manifest)) {
       output.putNextEntry(new JarEntry(PROBE_RESOURCE));
-      output.write(probeBytes);
+      output.write(resourceToBytes(PROBE_RESOURCE));
+      output.closeEntry();
+      output.putNextEntry(new JarEntry(PROBE_CONSTANTS_RESOURCE));
+      output.write(resourceToBytes(PROBE_CONSTANTS_RESOURCE));
+      output.closeEntry();
+      output.putNextEntry(new JarEntry(PROBE_INJECTION_RESOURCE));
+      output.write(resourceToBytes(PROBE_INJECTION_RESOURCE));
       output.closeEntry();
     }
 

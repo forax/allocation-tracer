@@ -48,7 +48,7 @@ public final class Probe {
 
   private static final ThreadLocal<Injection> INJECTION = new ThreadLocal<>();
 
-  private static final class Constants {
+  static final class Constants {
     static final BufferedWriter WRITER;
     static final Instrumentation INSTRUMENTATION;
 
@@ -93,12 +93,12 @@ public final class Probe {
       var counter = COUNTER++;
       var size = Constants.INSTRUMENTATION.getObjectSize(object);
       var line = counter + ":" /* + Thread.currentThread().getName() + ":" */
-          + className + ":" + methodName + methodDescriptor + ":" + lineNumber + ":" + size;
+          + className + "." + methodName + methodDescriptor + ":" + lineNumber + ":" + size;
       try {
         writer.write(line);
         writer.newLine();
       } catch (IOException e) {
-        System.err.println("[allocation-agent] io exception : " + e);
+        //System.err.println("[allocation-agent] io exception : " + e);
       }
     }
   }
@@ -116,12 +116,12 @@ public final class Probe {
     synchronized (LOCK) {
       var counter = COUNTER++;
       var line = counter + ":" /* + Thread.currentThread().getName() + ":"*/
-          + className + ":" + methodName + methodDescriptor + ":" + lineNumber + ":" + type;
+          + className + "." + methodName + methodDescriptor + ":" + lineNumber + ":" + type;
       try {
         writer.write(line);
         writer.newLine();
       } catch (IOException e) {
-        System.err.println("[allocation-agent] io exception : " + e);
+        //System.err.println("[allocation-agent] io exception : " + e);
       }
     }
   }
@@ -133,7 +133,7 @@ public final class Probe {
         writer.flush();
         writer.close();
       } catch (IOException e) {
-        System.err.println("[allocation-agent] io exception : " + e);
+        //System.err.println("[allocation-agent] io exception : " + e);
       }
     }
   }

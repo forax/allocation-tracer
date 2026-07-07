@@ -3,9 +3,8 @@ package com.github.forax.allocagent.agent;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.LocalVariablesSorter;
 
-final class AllocationMethodVisitor extends LocalVariablesSorter {
+final class AllocationMethodVisitor extends MethodVisitor {
   private static final String PROBE_OWNER = Probe.class.getName().replace('.', '/');
   private static final String PROBE_ARRAY_DESC =
       "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V";
@@ -17,9 +16,9 @@ final class AllocationMethodVisitor extends LocalVariablesSorter {
   private final String methodDescriptor;
   private int lineNumber;
 
-  AllocationMethodVisitor(int access, String descriptor, MethodVisitor mv,
+  AllocationMethodVisitor(MethodVisitor mv,
                           String ownerClassName, String methodName, String methodDescriptor) {
-    super(Opcodes.ASM9, access, descriptor, mv);
+    super(Opcodes.ASM9, mv);
     this.ownerClassName = ownerClassName;
     this.methodName = methodName;
     this.methodDescriptor = methodDescriptor;
