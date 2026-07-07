@@ -25,7 +25,7 @@ Build the agent:
 mvn package
 ```
 
-The resulting agent JAR is:
+The resulting agent JAR is in the folder `target`:
 
 ```text
 target/allocation-agent.jar
