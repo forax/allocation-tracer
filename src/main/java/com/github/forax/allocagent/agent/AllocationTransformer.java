@@ -26,9 +26,9 @@ final class AllocationTransformer implements ClassFileTransformer {
 
     try {
       var reader = new ClassReader(classfileBuffer);
-      var writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
+      var writer = new ClassWriter(reader, ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
       var visitor = new AllocationClassVisitor(writer);
-      reader.accept(visitor, ClassReader.EXPAND_FRAMES);
+      reader.accept(visitor, 0);
       return writer.toByteArray();
     } catch (Throwable t) {
       // An instrumentation bug should not crash the target application
