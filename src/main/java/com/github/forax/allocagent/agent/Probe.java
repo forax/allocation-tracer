@@ -94,7 +94,8 @@ public final class Probe {
       try {
         writer.write(line);
         writer.newLine();
-      } catch (IOException ignored) {
+      } catch (IOException e) {
+        System.err.println("[allocation-agent] io exception : " + e);
       }
     }
   }
@@ -116,7 +117,8 @@ public final class Probe {
       try {
         writer.write(line);
         writer.newLine();
-      } catch (IOException ignored) {
+      } catch (IOException e) {
+        System.err.println("[allocation-agent] io exception : " + e);
       }
     }
   }
@@ -127,7 +129,8 @@ public final class Probe {
       try {
         writer.flush();
         writer.close();
-      } catch (IOException ignored) {
+      } catch (IOException e) {
+        System.err.println("[allocation-agent] io exception : " + e);
       }
     }
   }
