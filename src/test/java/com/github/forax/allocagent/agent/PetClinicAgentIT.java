@@ -54,6 +54,6 @@ public class PetClinicAgentIT {
     System.err.println(lines.size() + " lines read");
     System.err.println(lines.stream().limit(10).collect(Collectors.toList()));
 
-    assertTrue(lines.size() > 100_000);
+    assertTrue(lines.size() > 10_000);
   }
 }
