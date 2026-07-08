@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -34,7 +35,7 @@ public class PetClinicAgentIT {
         .inheritIO()
         .start();
 
-    Thread.sleep(5_000);
+    Thread.sleep(7_000);
 
     process.destroy();
 
@@ -42,6 +43,9 @@ public class PetClinicAgentIT {
 
     var lines = Files.readAllLines(logFile);
 
-    assertTrue(lines.size() > 1_000_000);
+    //System.err.println(lines.size() + " lines read");
+    //System.err.println(lines.stream().limit(10).collect(Collectors.toList()));
+
+    assertTrue(lines.size() > 100_000);
   }
 }

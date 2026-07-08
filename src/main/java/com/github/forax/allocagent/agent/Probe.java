@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.Objects;
 
 import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.SYNC;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 
@@ -70,7 +71,7 @@ public final class Probe {
     try {
       var file = Path.of(path);
       writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8,
-          CREATE, TRUNCATE_EXISTING, WRITE);
+          CREATE, TRUNCATE_EXISTING, WRITE, SYNC);
     } catch (IOException e) {
       System.err.println("[allocation-agent] could not open log file '" + path + "': " + e);
       return;
