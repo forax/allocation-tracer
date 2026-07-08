@@ -71,7 +71,7 @@ public final class Probe {
     try {
       var file = Path.of(path);
       writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8,
-          CREATE, TRUNCATE_EXISTING, WRITE, SYNC);
+          CREATE, TRUNCATE_EXISTING, WRITE /*, SYNC*/);
     } catch (IOException e) {
       System.err.println("[allocation-agent] could not open log file '" + path + "': " + e);
       return;
