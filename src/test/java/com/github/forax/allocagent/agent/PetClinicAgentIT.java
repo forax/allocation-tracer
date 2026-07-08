@@ -18,6 +18,7 @@ public class PetClinicAgentIT {
     assertNotNull(agentJar, "allocation.agent.jar system property is not set");
 
     var logFile = Path.of("target", "petclinic-allocation.log");
+    Files.createDirectories(logFile.getParent());
 
     var java = Path.of(
         System.getProperty("java.home"),
