@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,6 +18,9 @@ public class PetClinicAgentIT {
   public void shouldLogAllocations() throws Exception {
     var agentJar = System.getProperty("allocation.agent.jar");
     assertNotNull(agentJar, "allocation.agent.jar system property is not set");
+
+    var isGitHubAction = "true".equals(System.getenv("GITHUB_ACTIONS"));
+    var sleepTime = isGitHubAction ? 20_000 : 7_000;
 
     var logFile = Path.of("target", "petclinic-allocation.log");
     Files.createDirectories(logFile.getParent());
@@ -39,7 +43,7 @@ public class PetClinicAgentIT {
         .inheritIO()
         .start();
 
-    Thread.sleep(7_000);
+    Thread.sleep(sleepTime);
 
     process.destroy();
 
@@ -47,8 +51,8 @@ public class PetClinicAgentIT {
 
     var lines = Files.readAllLines(logFile);
 
-    //System.err.println(lines.size() + " lines read");
-    //System.err.println(lines.stream().limit(10).collect(Collectors.toList()));
+    System.err.println(lines.size() + " lines read");
+    System.err.println(lines.stream().limit(10).collect(Collectors.toList()));
 
     assertTrue(lines.size() > 100_000);
   }
