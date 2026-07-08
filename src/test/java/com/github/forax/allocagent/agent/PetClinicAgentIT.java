@@ -27,11 +27,15 @@ public class PetClinicAgentIT {
         "java")
         .toString();
 
+    var petClinicJar = PetClinicAgentIT.class.getResource("/spring-petclinic-4.0.0-SNAPSHOT.jar");
+    assertNotNull(petClinicJar, "petclinic-jar not found");
+    var petClinicJarPath = Path.of(petClinicJar.toURI());
+
     var process = new ProcessBuilder(
         java,
         "-javaagent:" + agentJar + "=" + logFile,
         "-jar",
-        "src/test/resources/spring-petclinic-4.0.0-SNAPSHOT.jar")
+        petClinicJarPath.toString())
         .inheritIO()
         .start();
 
