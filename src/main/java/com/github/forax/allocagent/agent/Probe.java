@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.SYNC;
@@ -32,7 +33,7 @@ import static java.nio.file.StandardOpenOption.WRITE;
  */
 public final class Probe {
 
-  private static final Object LOCK = new Object();
+  private static final ReentrantLock LOCK = new ReentrantLock();
   private static int COUNTER;
 
   private Probe() {}
@@ -89,7 +90,8 @@ public final class Probe {
   public static void arrayAllocation(Object object, String className, String methodName, String methodDescriptor, int lineNumber) {
     var writer = Constants.WRITER;
 
-    synchronized (LOCK) {
+    LOCK.lock();
+    try {
       var counter = COUNTER++;
       var size = Constants.INSTRUMENTATION.getObjectSize(object);
       var line = counter + ":" /* + Thread.currentThread().getName() + ":" */
@@ -101,6 +103,8 @@ public final class Probe {
       } catch (IOException e) {
         //System.err.println("[allocation-agent] io exception : " + e);
       }
+    } finally {
+      LOCK.unlock();
     }
   }
 
@@ -114,7 +118,8 @@ public final class Probe {
   public static void objectAllocation(String type, String className, String methodName, String methodDescriptor, int lineNumber) {
     var writer = Constants.WRITER;
 
-    synchronized (LOCK) {
+    LOCK.lock();
+    try {
       var counter = COUNTER++;
       var line = counter + ":" /* + Thread.currentThread().getName() + ":"*/
           + className + "." + methodName + methodDescriptor + ":" + lineNumber + ":" + type;
@@ -125,6 +130,8 @@ public final class Probe {
       } catch (IOException e) {
         System.err.println("[allocation-agent] io exception : " + e);
       }
+    } finally {
+      LOCK.unlock();
     }
   }
 }
